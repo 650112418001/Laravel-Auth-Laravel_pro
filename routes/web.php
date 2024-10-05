@@ -16,6 +16,9 @@ use App\Http\Controllers\AttendingEventController;
 use App\Http\Controllers\StoreCommentController;
 use App\Http\Controllers\DeleteCommentController;
 use App\Http\Controllers\EventIndexController;
+use App\Http\Controllers\Userdashboard;
+use App\Http\Controllers\Listuser;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -61,6 +64,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::resource('events', EventController::class);
     Route::resource('users', UserController::class);
     Route::get('/e', EventIndexController::class)->name('eventIndex');
+    
 });
 
 
@@ -74,3 +78,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/reset-password-submit', [AdminController::class, 'reset_password_submit'])->name('admin_reset_password_submit');
 });
 
+
+Route::get('/admin/dashboard', Userdashboard::class)->name('admin_dashboard');
+
+// Route::get('/admin/dashboard', Listuser::class)->name('admin_dashboard');
