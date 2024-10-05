@@ -110,14 +110,14 @@
                                 @php
                                     $attendingCount = \App\Models\Attending::where('event_id', $event->id)->count(); // จำนวนผู้ที่เข้าร่วม
                                     $totalTickets = $event->num_register; // จำนวนตั๋วทั้งหมด
-
-                                    // ตรวจสอบช่วงวันที่
-                                    $startDate = \Carbon\Carbon::parse($event->start_date); // วันที่เริ่ม
-                                    $endDate = \Carbon\Carbon::parse($event->end_date); // วันที่จบ
+    
+                                    // ตรวจสอบช่วงวันที่และเวลา
+                                    $startDate = \Carbon\Carbon::parse($event->start_time); // เวลาเริ่ม
+                                    $endDate = \Carbon\Carbon::parse($event->end_time); // เวลาเสร็จสิ้น
                                 @endphp
-
-                                @if ($today->between($startDate, $endDate))
-                                    <!-- เงื่อนไขกรอง event ที่อยู่ภายในช่วงวันที่ดำเนินการ -->
+    
+                                @if ($today->isBetween($startDate, $endDate, true)) 
+                                    <!-- เงื่อนไขกรอง event ที่อยู่ภายในช่วงวันที่และเวลา -->
                                     <h4 class="small font-weight-bold">{{ $event->title }}
                                         <span class="float-right">{{ $attendingCount }}/{{ $totalTickets }}</span>
                                         <!-- แสดงจำนวนผู้เข้าร่วม/จำนวนตั๋ว -->
@@ -137,7 +137,7 @@
             </div>
         </div>
     </div>
-
+    
 
 
 
