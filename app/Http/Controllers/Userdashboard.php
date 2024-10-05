@@ -26,23 +26,25 @@ class Userdashboard extends Controller
                 'events.title as event_name',
                 'events.start_time as event_time',
                 'events.start_date as event_start',
-                'events.end_date as event_end'
+                'events.end_date as event_end',
+                'events.num_register as event_Tickets' // จำนวนที่นั่งใน event
             )
             ->get();
 
-            $events = Event::all(); 
-        
-            // คำนวณเปอร์เซ็นต์สำหรับแต่ละเหตุการณ์
-            foreach ($events as $event) {
-                $totalUsers = User::count(); // จำนวนผู้ใช้ทั้งหมด
-                $attendingCount = Attending::where('event_id', $event->id)->count(); // จำนวนผู้ใช้ที่เข้าร่วมเหตุการณ์
-            
-                // คำนวณเปอร์เซ็นต์
-                $event->progress = $totalUsers > 0 ? ($attendingCount / $totalUsers) * 100 : 0;
-            
-                // เรียกใช้ฟังก์ชันเพื่อรับสีของแถบโปรเกรส
-                $event->progressClass = $this->getProgressBarClass($event->progress);
-            }
+        // ดึงข้อมูล events ทั้งหมด
+        $events = Event::all();
+
+        // คำนวณเปอร์เซ็นต์สำหรับแต่ละเหตุการณ์โดยใช้ event_Tickets
+        foreach ($events as $event) {
+            $eventTickets = $event->num_register; // จำนวนที่นั่งของเหตุการณ์
+            $attendingCount = Attending::where('event_id', $event->id)->count(); // จำนวนผู้ใช้ที่เข้าร่วมเหตุการณ์
+
+            // คำนวณเปอร์เซ็นต์จากจำนวนผู้ใช้ที่เข้าร่วม เทียบกับจำนวนที่นั่งของเหตุการณ์
+            $event->progress = $eventTickets > 0 ? ($attendingCount / $eventTickets) * 100 : 0;
+
+            // เรียกใช้ฟังก์ชันเพื่อรับสีของแถบโปรเกรส
+            $event->progressClass = $this->getProgressBarClass($event->progress);
+        }
 
         // ส่งข้อมูลทั้งหมดไปยัง view
         return view('admin.dashboard', [
@@ -53,6 +55,7 @@ class Userdashboard extends Controller
         ]);
     }
 
+    // ฟังก์ชันเพื่อรับสีของแถบโปรเกรส
     private function getProgressBarClass($progress)
     {
         if ($progress <= 30) {
@@ -66,3 +69,4 @@ class Userdashboard extends Controller
         }
     }
 }
+
